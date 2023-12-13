@@ -3,7 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Day6 {
+public class Day06 {
     public static void main(String[] args) {
         // Removing because I don't feel like changing the parsing logic
         // for part 2
