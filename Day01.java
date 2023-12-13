@@ -2,7 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-public class Day1 {
+public class Day01 {
     public static void main(String[] args) {
 
         File f = new File("data/Day1_Input");
