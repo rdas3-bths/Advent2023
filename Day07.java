@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Collections;
 
-public class Day7 {
+public class Day07 {
     public static void main(String[] args) {
         ArrayList<String> fileData = getFileData("data/Day7_Input");
         ArrayList<CamelCardHand> cards = new ArrayList<CamelCardHand>();
