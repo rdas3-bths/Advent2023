@@ -14,16 +14,25 @@ public class Day14 {
             }
         }
 
-        
-        printGrid(grid);
-
-        int total = 0;
-        for (int r = 0; r < grid.length; r++) {
-            total += calculateLoadInRow(grid, r);
+        int cycles = 200;
+        for (int i = 0; i < cycles; i++) {
+            doCycle(grid);
+            int total = 0;
+            for (int r = 0; r < grid.length; r++) {
+                total += calculateLoadInRow(grid, r);
+            }
+            System.out.println("Doing cycle " + (i+1) + ": " + total);
         }
-        System.out.println(total);
-        System.out.println();
 
+
+
+    }
+
+    public static void doCycle(String[][] grid) {
+        tiltNorth(grid);
+        tiltWest(grid);
+        tiltSouth(grid);
+        tiltEast(grid);
     }
 
     public static void tiltSouth(String[][] grid) {
@@ -52,6 +61,16 @@ public class Day14 {
             while (rockToMove != -1) {
                 moveLeftOneColumn(r, rockToMove, grid);
                 rockToMove = findRockToMoveWest(r, grid);
+            }
+        }
+    }
+
+    public static void tiltEast(String[][] grid) {
+        for (int r = 0; r < grid.length; r++) {
+            int rockToMove = findRockToMoveEast(r, grid);
+            while (rockToMove != -1) {
+                moveRightOneColumn(r, rockToMove, grid);
+                rockToMove = findRockToMoveEast(r, grid);
             }
         }
     }
@@ -86,15 +105,6 @@ public class Day14 {
         return -1;
     }
 
-    public static void moveDownOneRow(int row, int col, String[][] grid) {
-        if (row != grid.length-1) {
-            String current = grid[row][col];
-            String below = grid[row+1][col];
-            grid[row+1][col] = current;
-            grid[row][col] = below;
-        }
-    }
-
     public static int findRockToMoveWest(int row, String[][] grid) {
         for (int i = 1; i < grid[0].length; i++) {
             String current = grid[row][i];
@@ -104,6 +114,27 @@ public class Day14 {
         }
         return -1;
     }
+
+    public static int findRockToMoveEast(int row, String[][] grid) {
+        for (int i = 0; i < grid[0].length-1; i++) {
+            String current = grid[row][i];
+            String right = grid[row][i+1];
+            if (current.equals("O") && right.equals("."))
+                return i;
+        }
+        return -1;
+    }
+
+    public static void moveDownOneRow(int row, int col, String[][] grid) {
+        if (row != grid.length-1) {
+            String current = grid[row][col];
+            String below = grid[row+1][col];
+            grid[row+1][col] = current;
+            grid[row][col] = below;
+        }
+    }
+
+
 
     public static void moveUpOneRow(int row, int col, String[][] grid) {
         if (row != 0) {
@@ -120,6 +151,15 @@ public class Day14 {
             String left = grid[row][col-1];
             grid[row][col-1] = current;
             grid[row][col] = left;
+        }
+    }
+
+    public static void moveRightOneColumn(int row, int col, String[][] grid) {
+        if (col != grid[0].length-1) {
+            String current = grid[row][col];
+            String right = grid[row][col+1];
+            grid[row][col+1] = current;
+            grid[row][col] = right;
         }
     }
 
