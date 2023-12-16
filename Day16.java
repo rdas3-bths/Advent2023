@@ -16,9 +16,6 @@ public class Day16 {
         }
         System.out.println();
         ArrayList<Visit> visits = new ArrayList<Visit>();
-        int startRow = 0;
-        int startColumn = 3;
-        char startDirection = 'd';
         int max = -1;
 
         // do top row
