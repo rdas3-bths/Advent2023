@@ -98,7 +98,6 @@ public class Day19 {
 
             // starting point for A
 
-            System.out.println(workflowName + " " + workflowRule + " " + index);
             generateConditions(workflowName, workflowRule, index, ruleSet, conditions);
 
             while (!workflowName.equals("in")) {
@@ -141,7 +140,6 @@ public class Day19 {
             long maxS = 4000;
 
             for (String c : conditions) {
-                System.out.println(c);
                 char operator = c.charAt(1);
                 char symbol = c.charAt(0);
                 int spaceIndex = c.indexOf(" ");
@@ -200,18 +198,12 @@ public class Day19 {
 
             }
 
-            System.out.println("x: [ " + minX + "," + maxX + " ]");
-            System.out.println("m: [ " + minM + "," + maxM + " ]");
-            System.out.println("a: [ " + minA + "," + maxA + " ]");
-            System.out.println("s: [ " + minS + "," + maxS + " ]");
             long xDiff = maxX - minX + 1;
             long mDiff = maxM - minM + 1;
             long aDiff = maxA - minA + 1;
             long sDiff = maxS - minS + 1;
-            System.out.println(xDiff + " " + mDiff + " " + aDiff + " " + sDiff);
             long combinationNumber = xDiff * mDiff * aDiff * sDiff;
             t += combinationNumber;
-            System.out.println("---------");
 
         }
 
