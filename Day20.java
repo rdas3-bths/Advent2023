@@ -8,16 +8,6 @@ public class Day20 {
     public static void main(String[] args) {
         ArrayList<String> fileData = getFileData("data/Day20_Input");
 
-        // Module class --> list of output modules, name
-        //              --> method to send a pulse to a module
-
-        // FlipFlop class (extends Module). Has an on or off status
-
-        // Conjunction class (extends Module). Has a list of all module names that send to this module
-        //                                     Keep track of most recent pulse sent by each input module
-
-        // Arraylist to hold all sent pulses
-
         ArrayList<Module> modules = new ArrayList<Module>();
         ArrayList<Pulse> pulses = new ArrayList<Pulse>();
         for (String d : fileData) {
