@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class Day20 {
     public static void main(String[] args) {
@@ -44,6 +45,18 @@ public class Day20 {
         }
 
 
+        // part 2 stuff
+        int rxIndex = findRXIndex(modules);
+        Module m = modules.get(rxIndex);
+        ArrayList<String> importantOutputs = m.getInputs();
+
+        boolean[] rxInputs = new boolean[importantOutputs.size()];
+        String[] rxInputNames = new String[importantOutputs.size()];
+        long[] rxIterations = new long[importantOutputs.size()];
+
+        for (int j = 0; j < importantOutputs.size(); j++) {
+            rxInputNames[j] = importantOutputs.get(j).substring(0, importantOutputs.get(j).indexOf("-"));
+        }
 
         long lowTotal = 0;
         long highTotal = 0;
@@ -66,14 +79,25 @@ public class Day20 {
                 }
                 processIndex = findLowestNonProcessedPulse(pulses);
             }
-            if (checkLowPulse("bg", pulses)) {
-                System.out.println(i);
-                break;
+
+            for (int x = 0; x < rxInputNames.length; x++) {
+                if (!rxInputs[x]) {
+                    if (checkLowPulse(rxInputNames[x], pulses)) {
+                        rxInputs[x] = true;
+                        rxIterations[x] = i;
+                    }
+                }
             }
 
+            boolean allFound = true;
+            for (boolean c : rxInputs) {
+                if (!c)
+                    allFound = false;
+            }
 
-
-
+            if (allFound) {
+                break;
+            }
 
             long low = 1;
             long high = 0;
@@ -87,19 +111,8 @@ public class Day20 {
 
         }
 
-//        kz --> rx
-//
-//        sj --> kz
-//        qq --> kz
-//        ls --> kz
-//        bg --> kz
-
-        // I figured this out manually .... dumb.
-
-        // rx will receive a low pulse when kz gets all high pulses
-        // kz will have all high pulses when sj, qq, ls, and bg have low
-        // when sj, qq, ls and bg have low pulse in the same iteration .. that's the answer?
-
+        // part 1 answer is lowTotal * highTotal
+        findLCM(rxIterations);
 
     }
 
@@ -116,6 +129,18 @@ public class Day20 {
         for (int i = 0; i < modules.size(); i++) {
             if (modules.get(i).getName().equals(name)) {
                 return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int findRXIndex(ArrayList<Module> modules) {
+        for (int i = 0; i < modules.size(); i++) {
+                Module m = modules.get(i);
+                ArrayList<String> outputs = m.getOutputs();
+                for (String o : outputs) {
+                    if (o.equals("rx"))
+                        return i;
             }
         }
         return -1;
@@ -153,5 +178,31 @@ public class Day20 {
         catch (FileNotFoundException e) {
             return fileData;
         }
+    }
+
+    // findGCD and findLCM taken from the internets to find the Lowest Common Multiple
+    // of an array of numbers (this is built-in for python!)
+    public static long findGCD(long a, long b){
+        //base condition
+        if(b == 0)
+            return a;
+
+        return findGCD(b, a%b);
+    }
+
+    public static void findLCM(long[] array) {
+        //initialize LCM and GCD with the first element
+        long lcm = array[0];
+        long gcd = array[0];
+
+        //loop through the array to find GCD
+        //use GCD to find the LCM
+        for(int i=1; i<array.length; i++){
+            gcd = findGCD(array[i], lcm);
+            lcm = (lcm*array[i])/gcd;
+        }
+
+        //output the LCM
+        System.out.println(lcm);
     }
 }
