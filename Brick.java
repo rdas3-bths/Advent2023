@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 public class Brick implements Comparable {
     private int xStart;
     private int xEnd;
@@ -14,6 +15,10 @@ public class Brick implements Comparable {
 
     private int brickNumber;
 
+    private int layer;
+
+    private ArrayList<Integer> bricksSupportedByThis;
+
     public Brick(int xStart, int xEnd, int yStart, int yEnd, int zStart, int zEnd) {
         this.xStart = xStart;
         this.xEnd = xEnd;
@@ -24,10 +29,28 @@ public class Brick implements Comparable {
         this.height = zEnd - zStart;
         bricksCreated++;
         this.brickNumber = bricksCreated;
+        layer = -1;
+        bricksSupportedByThis = new ArrayList<Integer>();
+    }
+
+    public ArrayList<Integer> getBricksSupportedByThis() {
+        return bricksSupportedByThis;
+    }
+
+    public void setBricksSupportedbyThis(ArrayList<Integer> bricksSupportedByThis) {
+        this.bricksSupportedByThis = bricksSupportedByThis;
     }
 
     public String toString() {
         return brickNumber + " : " + "x: " + xStart + "->" + xEnd + ", y: " + yStart + "->" + yEnd + ", z: " + zStart + "->" + zEnd;
+    }
+
+    public void setLayer(int layer) {
+        this.layer = layer;
+    }
+
+    public int getLayer() {
+        return layer;
     }
 
     public int getxStart() {
