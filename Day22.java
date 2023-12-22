@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Scanner;
 import java.util.Collections;
 
@@ -45,7 +46,7 @@ public class Day22 {
         }
 
         for (int i = 0; i <= height; i++) {
-            putBrick(first, layers.get(i));
+            putBrick(first, layers.get(i), i);
         }
 
         // get next brick (start at index 1)
@@ -68,7 +69,7 @@ public class Day22 {
                 }
                 int start = topLayerIndex+1;
                 for (int i = start; i <= start+currentBrickHeight; i++) {
-                    putBrick(b, layers.get(i));
+                    putBrick(b, layers.get(i), i);
                 }
             }
             else {
@@ -79,6 +80,8 @@ public class Day22 {
                     int[][] currentLayer = layers.get(check);
                     if (canBrickFit(b, currentLayer))
                         lowestLayerIndex = check;
+                    else
+                        break;
                 }
                 //System.out.println(b + " can fit on layer " + (lowestLayerIndex+1));
 
@@ -90,7 +93,7 @@ public class Day22 {
                 }
                 int start = lowestLayerIndex;
                 for (int i = start; i <= start+h; i++) {
-                    putBrick(b, layers.get(i));
+                    putBrick(b, layers.get(i), i);
                 }
             }
         }
@@ -98,15 +101,119 @@ public class Day22 {
 
 
         for (int i = 0; i < layers.size(); i++) {
-            System.out.println("Layer " + (i+1));
-            printLayer(layers.get(i));
+            //System.out.println("Layer " + (i+1));
+            //printLayer(layers.get(i));
 
         }
 
+        // how do I know if I can disintegrate?
+        // a brick is not supporting any other brick
+        // every brick i am supporting has ANOTHER brick supporting it thats not me
+
+
+        for (Brick b : bricks) {
+            getBricksSupportedByThisBrick(b, layers);
+        }
+
+
+        ArrayList<Integer> allSupportList = new ArrayList<Integer>();
+        for (Brick b : bricks) {
+            for (int s : b.getBricksSupportedByThis())
+                allSupportList.add(s);
+        }
+
+        ArrayList<Brick> cannotBeDestroyed = new ArrayList<Brick>();
+
+        int count = 0;
+        for (Brick b : bricks) {
+            boolean destroy = true;
+            for (int x : b.getBricksSupportedByThis()) {
+                if (Collections.frequency(allSupportList, x) == 1)
+                    destroy = false;
+            }
+            if (destroy) {
+                count++;
+            }
+            else {
+                cannotBeDestroyed.add(b);
+            }
+
+        }
+
+        System.out.println("Part one: " + count);
+
+        int partTwo = 0;
+        for (Brick b : cannotBeDestroyed) {
+            ArrayList<Integer> chain = new ArrayList<Integer>();
+            chain.add(b.getBrickNumber());
+            addChainedList(b, chain, bricks);
+            partTwo += (chain.size()-1);
+        }
+
+        System.out.println("Part two: " + partTwo);
+
+
     }
 
-    public static void putBrick(Brick b, int[][] layer) {
+    public static ArrayList<Integer> getSupportedBy(Brick b, ArrayList<Brick> bricks) {
+        ArrayList<Integer> supportedBy = new ArrayList<Integer>();
+        for (Brick check : bricks) {
+            if (check.getBricksSupportedByThis().contains(b.getBrickNumber()))
+                supportedBy.add(check.getBrickNumber());
+        }
+        return supportedBy;
+    }
+
+    public static void addChainedList(Brick b, ArrayList<Integer> chain, ArrayList<Brick> bricks) {
+
+        for (int x : b.getBricksSupportedByThis()) {
+            Brick br = findBrick(bricks, x);
+            if (!chain.contains(x)) {
+                // add if all of this supporting bricks are in chain
+                ArrayList<Integer> supportingBricks = getSupportedBy(findBrick(bricks, x), bricks);
+                boolean add = true;
+                for (int sup : supportingBricks) {
+                    if (!chain.contains(sup))
+                        add = false;
+                }
+                if (add)
+                    chain.add(x);
+            }
+            addChainedList(br, chain, bricks);
+
+        }
+        if (b.getBricksSupportedByThis().isEmpty()) return;
+    }
+
+    public static Brick findBrick(ArrayList<Brick> bricks, int number) {
+        for (Brick b : bricks) {
+            if (b.getBrickNumber() == number)
+                return b;
+        }
+        return null;
+    }
+
+    public static void getBricksSupportedByThisBrick(Brick b, ArrayList<int[][]> layers) {
+        ArrayList<Integer> supportList = new ArrayList<Integer>();
+        if (b.getLayer() == layers.size()-1)
+            return;
+        int[][] currentLayer = layers.get(b.getLayer());
+        int[][] aboveLayer = layers.get(b.getLayer()+1);
+
+        for (int i = 0; i < currentLayer.length; i++) {
+            for (int j = 0; j < currentLayer[0].length; j++) {
+                if (currentLayer[i][j] == b.getBrickNumber() && aboveLayer[i][j] != 0) {
+                    if (!supportList.contains(aboveLayer[i][j]))
+                        supportList.add(aboveLayer[i][j]);
+                }
+            }
+        }
+        b.setBricksSupportedbyThis(supportList);
+    }
+
+    public static void putBrick(Brick b, int[][] layer, int layerNumber) {
         int number = b.getBrickNumber();
+        b.setLayer(layerNumber);
         for (int x = b.getxStart(); x <= b.getxEnd(); x++) {
             for (int y = b.getyStart(); y <= b.getyEnd(); y++) {
                 layer[x][y] = number;
